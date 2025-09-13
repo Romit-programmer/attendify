@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Attendify</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { theme: { extend: { colors: { brand: '#2563eb' } } } };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style> body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; } </style>
+  </head>
+  <body class="bg-slate-50">
+    <div class="max-w-6xl mx-auto p-6">
+      <header class="flex items-center justify-between py-6">
+        <h1 class="text-2xl font-extrabold text-brand">Attendify</h1>
+        <nav class="space-x-4 text-sm">
+          <a class="text-slate-600 hover:text-brand" href="#">Home</a>
+          <a class="text-slate-400" href="#">Docs (soon)</a>
+          <a class="text-slate-400" href="#">Support (soon)</a>
+        </nav>
+      </header>
+
+      <section class="text-center py-10">
+        <h2 class="text-3xl font-bold text-slate-800">Streamlined attendance & structured routines</h2>
+        <p class="text-slate-600 mt-2">Choose your terminal to continue</p>
+      </section>
+
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="rounded-xl border border-slate-200 bg-white p-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xl font-semibold text-slate-800">Student Terminal</h3>
+            <span class="text-xs px-2 py-1 bg-blue-50 text-brand rounded-full">MVP</span>
+          </div>
+          <p class="text-slate-600 mt-2">Scan QR to mark attendance and view your weekly routine.</p>
+          <div class="mt-4 flex gap-3">
+            <button id="btn-student-scan" class="px-4 py-2 bg-brand text-white rounded-lg">Scan QR</button>
+            <button id="btn-student-routine" class="px-4 py-2 border border-slate-200 rounded-lg">View Routine</button>
+          </div>
+          <div class="mt-4 flex gap-4 text-sm text-slate-500">
+            <span>Dashboard (soon)</span>
+            <span>Goals (soon)</span>
+            <span>Suggestions (soon)</span>
+          </div>
+          <div id="student-view" class="mt-6 hidden">
+            <div id="reader" class="w-full max-w-md aspect-square mx-auto border border-slate-200 rounded-lg"></div>
+            <div class="mt-4">
+              <label class="text-sm text-slate-600">Student ID</label>
+              <input id="student-id" class="mt-1 w-full border border-slate-200 rounded-lg px-3 py-2" placeholder="e.g., STU1234" />
+            </div>
+            <pre id="scan-result" class="mt-3 text-xs bg-slate-50 p-3 rounded border border-slate-200 overflow-auto"></pre>
+          </div>
+          <div id="student-routine" class="mt-6 hidden">
+            <h4 class="font-semibold text-slate-700">Weekly Routine (Placeholder)</h4>
+            <ul class="mt-2 list-disc list-inside text-slate-600 text-sm">
+              <li>Mon: DS Lecture, Free slot → Practice problems</li>
+              <li>Tue: DBMS Lab, Free slot → Reading hour</li>
+              <li>Wed: OS Lecture, Free slot → Project planning</li>
+              <li>Thu: Maths Tutorial, Free slot → Mock quiz</li>
+              <li>Fri: Seminar, Free slot → Career prep</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-slate-200 bg-white p-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xl font-semibold text-slate-800">Teacher Terminal</h3>
+            <span class="text-xs px-2 py-1 bg-blue-50 text-brand rounded-full">MVP</span>
+          </div>
+          <p class="text-slate-600 mt-2">Display rotating QR and see present students.</p>
+          <div class="mt-4 flex gap-3">
+            <button id="btn-teacher-qr" class="px-4 py-2 bg-brand text-white rounded-lg">Show QR</button>
+            <button id="btn-teacher-routine" class="px-4 py-2 border border-slate-200 rounded-lg">View Routine</button>
+          </div>
+          <div class="mt-4 flex gap-4 text-sm text-slate-500">
+            <span>Analytics (soon)</span>
+            <span>Exports (soon)</span>
+            <span>Manual override (soon)</span>
+          </div>
+          <div id="teacher-view" class="mt-6 hidden">
+            <div class="grid md:grid-cols-[1fr,1fr] gap-6">
+              <div>
+                <div id="qrcode" class="w-full max-w-xs aspect-square mx-auto border border-slate-200 rounded-lg flex items-center justify-center"></div>
+                <p class="text-center text-xs text-slate-500 mt-2" id="qr-expiry"></p>
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-700">Present Students</h4>
+                <ul id="present-list" class="mt-2 text-sm text-slate-700 space-y-1 border border-slate-200 rounded p-3 max-h-64 overflow-auto"></ul>
+              </div>
+            </div>
+          </div>
+          <div id="teacher-routine" class="mt-6 hidden">
+            <h4 class="font-semibold text-slate-700">Weekly Routine (Placeholder)</h4>
+            <ul class="mt-2 list-disc list-inside text-slate-600 text-sm">
+              <li>Mon: 9–11 Class A, 2–3 Office hour</li>
+              <li>Tue: 10–12 Class B, 3–4 Review</li>
+              <li>Wed: 9–10 Seminar, 1–2 Lab prep</li>
+              <li>Thu: 11–1 Class C, 4–5 Mentoring</li>
+              <li>Fri: 9–11 Class D, 1–2 Admin</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script>
+      const studentView = document.getElementById('student-view');
+      const studentRoutine = document.getElementById('student-routine');
+      const teacherView = document.getElementById('teacher-view');
+      const teacherRoutine = document.getElementById('teacher-routine');
+      const presentList = document.getElementById('present-list');
+
+      document.getElementById('btn-student-scan').onclick = () => {
+        studentRoutine.classList.add('hidden');
+        studentView.classList.remove('hidden');
+        if (!window.__scannerStarted) startScanner();
+      };
+      document.getElementById('btn-student-routine').onclick = () => {
+        studentView.classList.add('hidden');
+        studentRoutine.classList.remove('hidden');
+      };
+      document.getElementById('btn-teacher-qr').onclick = () => {
+        teacherRoutine.classList.add('hidden');
+        teacherView.classList.remove('hidden');
+        startQrRotation();
+        startPresentPolling();
+      };
+      document.getElementById('btn-teacher-routine').onclick = () => {
+        teacherView.classList.add('hidden');
+        teacherRoutine.classList.remove('hidden');
+      };
+
+      let currentToken = null;
+      let qrRefreshTimer = null;
+
+      async function fetchToken() {
+        const res = await fetch('/api/qr/token');
+        if (!res.ok) throw new Error('Failed to get token');
+        return res.json();
+      }
+
+      async function startQrRotation() {
+        clearInterval(qrRefreshTimer);
+        await refreshQr();
+        qrRefreshTimer = setInterval(refreshQr, 30000);
+      }
+
+      async function refreshQr() {
+        try {
+          const { token, expiresAt } = await fetchToken();
+          currentToken = token;
+          const qr = new QRious({ element: document.createElement('canvas'), value: token, size: 240 });
+          const qrcodeEl = document.getElementById('qrcode');
+          qrcodeEl.innerHTML = '';
+          qrcodeEl.appendChild(qr.canvas);
+          document.getElementById('qr-expiry').textContent = 'Expires: ' + new Date(expiresAt).toLocaleTimeString();
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      async function startScanner() {
+        window.__scannerStarted = true;
+        const html5QrCode = new Html5Qrcode("reader");
+        try {
+          const cameras = await Html5Qrcode.getCameras();
+          const camId = cameras && cameras.length ? cameras[0].id : null;
+          if (!camId) throw new Error('No camera');
+          await html5QrCode.start(
+            camId,
+            { fps: 10, qrbox: 250 },
+            async (decodedText) => {
+              html5QrCode.pause(true);
+              const studentId = document.getElementById('student-id').value || 'STU-DEMO';
+              const res = await fetch('/api/attendance/mark', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: decodedText, studentId })
+              });
+              const data = await res.json();
+              document.getElementById('scan-result').textContent = JSON.stringify(data, null, 2);
+              // update teacher list optimistically
+              addPresent(studentId);
+              html5QrCode.resume();
+            }
+          );
+        } catch (err) {
+          document.getElementById('scan-result').textContent = String(err);
+        }
+      }
+
+      function addPresent(studentId) {
+        const li = document.createElement('li');
+        li.textContent = studentId + ' ✓';
+        presentList.prepend(li);
+      }
+
+      let presentTimer = null;
+      async function loadPresent() {
+        try {
+          const res = await fetch('/api/attendance/present');
+          if (!res.ok) return;
+          const data = await res.json();
+          presentList.innerHTML = '';
+          data.forEach(rec => {
+            const li = document.createElement('li');
+            const t = rec.timestamp ? new Date(rec.timestamp).toLocaleTimeString() : '';
+            li.textContent = `${rec.studentId} ✓ ${t}`;
+            presentList.appendChild(li);
+          });
+        } catch (e) { /* noop */ }
+      }
+      function startPresentPolling() {
+        clearInterval(presentTimer);
+        loadPresent();
+        presentTimer = setInterval(loadPresent, 5000);
+      }
+    </script>
+  </body>
+  </html>
+
+
